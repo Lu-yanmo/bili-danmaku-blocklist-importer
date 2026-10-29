@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         B站弹幕屏蔽词一键导入
 // @namespace    Lu_yamo.blocklist.importer
-// @version      1.0.0
-// @description  在 bilibili.com 任意页面打开面板，粘贴文本/选择 txt·xml 文件/使用内置词库，批量导入弹幕屏蔽词到账号云端（关键词+正则，去重、限速、进度日志），并支持导出备份。导入后手机 App 同账号同步即生效。
+// @version      1.1.0
+// @description  在 bilibili.com 任意页面打开面板，按分类勾选/粘贴文本/选择 txt·xml 文件，批量导入弹幕屏蔽词到账号云端（关键词+正则，去重、限速、进度日志），并支持导出备份。导入后手机 App 同账号同步即生效。
 // @author       Lu_yamo
 // @match        *://*.bilibili.com/*
 // @grant        GM_registerMenuCommand
@@ -17,72 +17,89 @@
   'use strict';
 
   // ─────────────────────────────────────────────
-  // 内置词库（与 bilibili-blocklist 同源，2026-10 整理）
-  // 格式：每行一条；r= 前缀表示正则；# 开头为注释
+  // 内置词库（2026-10-29 扩充版，与 blocklist.txt 同源）
+  // type: 0 = 关键词（包含即命中），1 = 正则
+  // on: 面板中默认是否勾选
   // ─────────────────────────────────────────────
-  const BUILTIN_LIST = `
-# ── 一、广告引流 ──
-公众号
-加微信
-加VX
-加QQ
-加群
-进群
-粉丝群
-扫码
-二维码
-刷单
-兼职
-网赚
-返利
-优惠券
-领红包
-代购
-私聊我
-看主页
-主页详聊
-日入过万
-福利姬
-招代理
-接推广
-# ── 二、引战对喷 ──
-无脑吹
-无脑黑
-孝子
-急了
-你急
-破防
-小丑
-杠精
-云玩家
-反串
-# ── 三、低质刷屏 ──
-到此一游
-路过打卡
-打卡
-前排
-纯路人
-刷到这
-火钳刘明
-完结撒花
-失踪人口
-下次一定
-一键三连
-求三连
-求关注
-求点赞
-先赞后看
-# ── 四、正则 ──
-r=1[3-9]\\d{9}
-r=https?://
-r=www\\.
-r=^[\\d\\s.,:;!?~\\-—…、。，：；？！～"']+$
-r=^(.)\\1{4,}$
-r=^\\d{1,3}[:：]\\d{2}(:\\d{2})?$
-r=^[hH]{4,}$
-r=[2467]{5,}
-r=[vV]信|薇信|威芯
-`;
+  const CATEGORIES = [
+    {
+      key: 'ads', label: '广告引流', on: true,
+      words: [
+        ['公众号', 0], ['加微信', 0], ['加VX', 0], ['加QQ', 0], ['加群', 0],
+        ['进群', 0], ['粉丝群', 0], ['扫码', 0], ['二维码', 0], ['刷单', 0],
+        ['兼职', 0], ['网赚', 0], ['返利', 0], ['优惠券', 0], ['领红包', 0],
+        ['代购', 0], ['私聊我', 0], ['看主页', 0], ['主页详聊', 0], ['日入过万', 0],
+        ['福利姬', 0], ['招代理', 0], ['接推广', 0], ['免费领', 0], ['免费送', 0],
+        ['零元购', 0], ['九块九', 0], ['9块9', 0], ['一分钱', 0], ['日结', 0],
+        ['一单一结', 0], ['代写', 0], ['代做', 0], ['接单', 0], ['引流', 0],
+        ['变现', 0], ['获客', 0], ['全国空降', 0], ['同城约', 0], ['番号', 0],
+        ['资源群', 0], ['扣群', 0], ['扣裙', 0],
+      ],
+    },
+    {
+      key: 'flame', label: '引战对喷', on: true,
+      words: [
+        ['无脑吹', 0], ['无脑黑', 0], ['孝子', 0], ['急了', 0], ['你急', 0],
+        ['破防', 0], ['小丑', 0], ['杠精', 0], ['云玩家', 0], ['反串', 0],
+        ['傻逼', 0], ['脑残', 0], ['弱智', 0], ['智障', 0], ['低能', 0],
+        ['白痴', 0], ['蠢货', 0], ['废物', 0], ['舔狗', 0], ['跪舔', 0],
+        ['就这', 0], ['不过如此', 0], ['nmsl', 0],
+      ],
+    },
+    {
+      key: 'spam', label: '低质刷屏', on: true,
+      words: [
+        ['到此一游', 0], ['路过打卡', 0], ['打卡', 0], ['前排', 0], ['纯路人', 0],
+        ['刷到这', 0], ['火钳刘明', 0], ['完结撒花', 0], ['失踪人口', 0],
+        ['下次一定', 0], ['一键三连', 0], ['求三连', 0], ['求关注', 0],
+        ['求点赞', 0], ['先赞后看', 0], ['火前留名', 0], ['占楼', 0], ['沙发', 0],
+        ['考古', 0], ['补票', 0], ['蹲后续', 0], ['蹲一个', 0], ['我来晚了', 0],
+      ],
+    },
+    {
+      key: 'regex', label: '结构化正则', on: true,
+      words: [
+        ['1[3-9]\\d{9}', 1],                                        // 手机号
+        ['https?://', 1],                                           // 链接
+        ['www\\.', 1],                                              // 链接
+        ['[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}', 1],     // 邮箱
+        ['(\\+|＋)\\s*[vVＶ]', 1],                                  // +V 加人变体
+        ['^\\d{9,}$', 1],                                           // QQ群号等长数字
+        ['^\\d{1,3}[:：]\\d{2}(:\\d{2})?$', 1],                     // 时间戳刷屏
+        ['^第[0-9一二三四五六七八九十百]+[名个楼]?$', 1],            // 抢楼
+        ['^[\\d\\s.,:;!?~\\-—…、。，：；？！～"\']+$', 1],           // 纯数字标点
+        ['^(.)\\1{4,}$', 1],                                        // 单字重复5次以上
+        ['^[hH]{4,}$', 1],                                          // hhhh 刷屏
+        ['[12467]{5,}', 1],                                         // 233/666 连打5位以上
+        ['[vV]信|薇信|威芯', 1],                                    // 微信变体
+      ],
+    },
+    {
+      key: 'sentiment', label: '高频梗/情怀刷屏（高误伤）', on: false,
+      words: [
+        ['前方高能', 0], ['高能', 0], ['空耳', 0], ['泪目', 0], ['爷青回', 0],
+        ['爷青结', 0], ['DNA动了', 0], ['awsl', 0], ['名场面', 0], ['有内味了', 0],
+        ['好活', 0], ['广告', 0], ['推广', 0], ['恰烂钱', 0],
+      ],
+    },
+    {
+      key: 'politics', label: '时政引战（高误伤）', on: false,
+      words: [
+        ['1450', 0], ['50万', 0], ['50w', 0], ['来电了', 0], ['遥遥领先', 0],
+        ['小粉红', 0], ['公知', 0],
+      ],
+    },
+    {
+      key: 'memes', label: '烂梗（看口味）', on: false,
+      words: [
+        ['小黑子', 0], ['鸡脚', 0], ['你干嘛', 0], ['只因', 0], ['2年半', 0],
+        ['泰裤辣', 0], ['鸽鸽', 0], ['乐子人', 0], ['鼠鼠', 0], ['典中典', 0],
+        ['绷不住了', 0], ['笑嘻了', 0], ['奥利给', 0], ['栓Q', 0], ['退退退', 0],
+        ['绝绝子', 0], ['yyds', 0], ['破大防', 0], ['蚌埠住了', 0], ['芜湖', 0],
+        ['什么档次', 0], ['老登', 0], ['逆天', 0], ['抽象', 0],
+      ],
+    },
+  ];
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const csrf = () => (document.cookie.match(/bili_jct=([^;]+)/) || [])[1] || '';
@@ -173,17 +190,15 @@ r=[vV]信|薇信|威芯
   }
 
   // ─────────────────────────────────────────────
-  // 主流程：导入
+  // 主流程：导入（rules: [{v, type}]）
   // ─────────────────────────────────────────────
   let importing = false;
-  async function runImport(text) {
+  async function importRules(rules, title) {
     if (importing) { log('⏳ 已有导入在进行中，请稍候'); return; }
     if (!csrf()) { log('❌ 未检测到登录态（cookie 无 bili_jct），请先登录'); return; }
-    const { rules, skippedDisabled } = parseInput(text);
-    if (!rules.length) { log('❌ 没解析到任何词条（# 注释行会被跳过）'); return; }
+    if (!rules.length) { log('❌ 没有可导入的词条'); return; }
     importing = true;
-    log(`解析到 ${rules.length} 条词条` +
-        (skippedDisabled ? `，另有 ${skippedDisabled} 条 XML 关闭状态词条已跳过` : '') + '，开始导入…');
+    log(`【${title}】共 ${rules.length} 条词条，开始导入…`);
     const exist = await fetchExist();
     let ok = 0, dup = 0, fail = 0;
     const failed = [];
@@ -225,40 +240,70 @@ r=[vV]信|薇信|威芯
     if (panel) { panel.style.display = panel.style.display === 'none' ? 'flex' : 'none'; return; }
     panel = document.createElement('div');
     panel.id = 'muyan-bl-panel';
+
+    // 动态生成分类勾选区
+    const catHtml = CATEGORIES.map((c, i) => {
+      const n = c.words.length;
+      return `<label class="muyan-bl-cat" title="${n} 条词条">`
+        + `<input type="checkbox" data-cat="${i}" ${c.on ? 'checked' : ''}> ${c.label} (${n})</label>`;
+    }).join('');
+
     panel.innerHTML = `
       <style>
-        #muyan-bl-panel{position:fixed;top:64px;right:16px;width:380px;max-height:80vh;
+        #muyan-bl-panel{position:fixed;top:64px;right:16px;width:400px;max-height:85vh;
           background:#fff;color:#18191c;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.25);
           z-index:2147483647;display:flex;flex-direction:column;padding:14px;gap:8px;
           font:13px/1.6 "Microsoft YaHei",sans-serif;}
         #muyan-bl-panel h3{margin:0;font-size:14px;display:flex;justify-content:space-between;align-items:center;}
         #muyan-bl-panel a{color:#00a1d6;cursor:pointer;text-decoration:none;font-weight:normal;font-size:12px;}
-        #muyan-bl-text{width:100%;height:160px;box-sizing:border-box;resize:vertical;
+        #muyan-bl-cats{display:flex;flex-wrap:wrap;gap:4px 10px;background:#f6f7f8;border-radius:6px;padding:8px;}
+        .muyan-bl-cat{display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:12px;user-select:none;}
+        .muyan-bl-cat input{accent-color:#00a1d6;}
+        #muyan-bl-text{width:100%;height:110px;box-sizing:border-box;resize:vertical;
           border:1px solid #e3e5e7;border-radius:6px;padding:6px;font:12px/1.5 Consolas,monospace;}
         #muyan-bl-btns{display:flex;gap:6px;flex-wrap:wrap;}
         #muyan-bl-btns button{flex:1;border:none;border-radius:6px;padding:7px 10px;cursor:pointer;
-          font-size:13px;background:#00a1d6;color:#fff;}
+          font-size:13px;background:#00a1d6;color:#fff;white-space:nowrap;}
         #muyan-bl-btns button.ghost{background:#f1f2f3;color:#18191c;}
         #muyan-bl-log{flex:1;overflow-y:auto;background:#f6f7f8;border-radius:6px;padding:6px 8px;
           font:12px/1.6 Consolas,monospace;min-height:80px;white-space:pre-wrap;word-break:break-all;}
       </style>
       <h3>弹幕屏蔽词导入 <a id="muyan-bl-close">收起</a></h3>
-      <textarea id="muyan-bl-text" placeholder="每行一个词条；r= 开头为正则；# 开头为注释&#10;也可直接粘贴 XML 屏蔽词文件内容"></textarea>
+      <div>
+        <div style="font-size:12px;color:#61666d;margin-bottom:4px;">按分类导入内置词库：</div>
+        <div id="muyan-bl-cats">${catHtml}</div>
+      </div>
       <div id="muyan-bl-btns">
-        <button id="muyan-bl-go">导入以上内容</button>
-        <button id="muyan-bl-builtin" class="ghost">内置词库</button>
+        <button id="muyan-bl-go">导入勾选分类</button>
         <button id="muyan-bl-file" class="ghost">选文件(.txt/.xml)</button>
         <button id="muyan-bl-exp" class="ghost">导出备份</button>
+      </div>
+      <textarea id="muyan-bl-text" placeholder="自定义导入（可选）：每行一个词条；r= 开头为正则；# 开头为注释；也可直接粘贴 XML 屏蔽词文件内容"></textarea>
+      <div id="muyan-bl-btns2" style="display:flex;gap:6px;">
+        <button id="muyan-bl-custom" class="ghost" style="flex:1;border:none;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:13px;color:#18191c;">导入以上自定义内容</button>
       </div>
       <input type="file" id="muyan-bl-input" accept=".txt,.xml,.json" style="display:none">
       <div id="muyan-bl-log"></div>`;
     document.documentElement.appendChild(panel);
 
     panel.querySelector('#muyan-bl-close').onclick = () => (panel.style.display = 'none');
-    panel.querySelector('#muyan-bl-go').onclick = () => runImport(panel.querySelector('#muyan-bl-text').value);
-    panel.querySelector('#muyan-bl-builtin').onclick = () => {
-      panel.querySelector('#muyan-bl-text').value = BUILTIN_LIST;
-      runImport(BUILTIN_LIST);
+    panel.querySelector('#muyan-bl-go').onclick = () => {
+      const rules = [];
+      const picked = [];
+      panel.querySelectorAll('#muyan-bl-cats input:checked').forEach((cb) => {
+        const c = CATEGORIES[Number(cb.dataset.cat)];
+        picked.push(c.label);
+        rules.push(...c.words.map(([v, type]) => ({ v, type })));
+      });
+      if (!picked.length) { log('❌ 请先勾选至少一个分类'); return; }
+      log('已选分类：' + picked.join('、'));
+      importRules(rules, '内置词库·' + picked.length + ' 个分类');
+    };
+    panel.querySelector('#muyan-bl-custom').onclick = () => {
+      const text = panel.querySelector('#muyan-bl-text').value;
+      const { rules, skippedDisabled } = parseInput(text);
+      if (skippedDisabled) log(`⏭ XML 中 ${skippedDisabled} 条关闭状态词条已跳过`);
+      importRules(rules, '自定义内容');
     };
     panel.querySelector('#muyan-bl-file').onclick = () => panel.querySelector('#muyan-bl-input').click();
     panel.querySelector('#muyan-bl-exp').onclick = exportBackup;
@@ -267,14 +312,14 @@ r=[vV]信|薇信|威芯
       if (!f) return;
       const reader = new FileReader();
       reader.onload = () => {
-        const text = String(reader.result);
-        panel.querySelector('#muyan-bl-text').value = text;
-        runImport(text);
+        panel.querySelector('#muyan-bl-text').value = String(reader.result);
+        panel.querySelector('#muyan-bl-custom').click();
       };
       reader.readAsText(f, 'utf-8');
       e.target.value = '';
     };
-    log('面板就绪。粘贴词条/选文件/用内置词库，然后点导入。');
+    const total = CATEGORIES.reduce((s, c) => s + c.words.length, 0);
+    log(`面板就绪。内置词库共 ${total} 条（7 个分类，默认勾选 4 个高置信分类），按需勾选后点导入。`);
   }
 
   GM_registerMenuCommand('屏蔽词导入面板', openPanel);
