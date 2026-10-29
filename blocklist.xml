@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- B 站网页播放器导入用：任意视频播放器 → 弹幕设置 → 弹幕屏蔽列表 → 空白处右键 → 导入XML文件 -->
+<!-- 争议组 / 烂梗组以 enabled="false" 导入，需手动开启 -->
+<filters>
+  <!-- 一、广告引流 -->
+  <item enabled="true">公众号</item>
+  <item enabled="true">加微信</item>
+  <item enabled="true">加VX</item>
+  <item enabled="true">加QQ</item>
+  <item enabled="true">加群</item>
+  <item enabled="true">进群</item>
+  <item enabled="true">粉丝群</item>
+  <item enabled="true">扫码</item>
+  <item enabled="true">二维码</item>
+  <item enabled="true">刷单</item>
+  <item enabled="true">兼职</item>
+  <item enabled="true">网赚</item>
+  <item enabled="true">返利</item>
+  <item enabled="true">优惠券</item>
+  <item enabled="true">领红包</item>
+  <item enabled="true">代购</item>
+  <item enabled="true">私聊我</item>
+  <item enabled="true">看主页</item>
+  <item enabled="true">主页详聊</item>
+  <item enabled="true">日入过万</item>
+  <item enabled="true">福利姬</item>
+  <item enabled="true">招代理</item>
+  <item enabled="true">接推广</item>
+  <!-- 二、引战对喷 -->
+  <item enabled="true">无脑吹</item>
+  <item enabled="true">无脑黑</item>
+  <item enabled="true">孝子</item>
+  <item enabled="true">急了</item>
+  <item enabled="true">你急</item>
+  <item enabled="true">破防</item>
+  <item enabled="true">小丑</item>
+  <item enabled="true">杠精</item>
+  <item enabled="true">云玩家</item>
+  <item enabled="true">反串</item>
+  <!-- 三、低质刷屏 -->
+  <item enabled="true">到此一游</item>
+  <item enabled="true">路过打卡</item>
+  <item enabled="true">打卡</item>
+  <item enabled="true">前排</item>
+  <item enabled="true">纯路人</item>
+  <item enabled="true">刷到这</item>
+  <item enabled="true">火钳刘明</item>
+  <item enabled="true">完结撒花</item>
+  <item enabled="true">失踪人口</item>
+  <item enabled="true">下次一定</item>
+  <item enabled="true">一键三连</item>
+  <item enabled="true">求三连</item>
+  <item enabled="true">求关注</item>
+  <item enabled="true">求点赞</item>
+  <item enabled="true">先赞后看</item>
+  <!-- 四、正则（高置信） -->
+  <item enabled="true">r=1[3-9]\d{9}</item>
+  <item enabled="true">r=https?://</item>
+  <item enabled="true">r=www\.</item>
+  <item enabled="true">r=^[\d\s.,:;!?~\-—…、。，：；？！～"']+$</item>
+  <item enabled="true">r=^(.)\1{4,}$</item>
+  <item enabled="true">r=^\d{1,3}[:：]\d{2}(:\d{2})?$</item>
+  <item enabled="true">r=^[hH]{4,}$</item>
+  <item enabled="true">r=[2467]{5,}</item>
+  <item enabled="true">r=[vV]信|薇信|威芯</item>
+  <!-- 五、争议组（默认关闭） -->
+  <item enabled="false">前方高能</item>
+  <item enabled="false">高能</item>
+  <item enabled="false">空耳</item>
+  <item enabled="false">泪目</item>
+  <item enabled="false">爷青回</item>
+  <item enabled="false">爷青结</item>
+  <item enabled="false">DNA动了</item>
+  <item enabled="false">awsl</item>
+  <item enabled="false">名场面</item>
+  <item enabled="false">广告</item>
+  <item enabled="false">推广</item>
+  <item enabled="false">恰烂钱</item>
+  <item enabled="false">1450</item>
+  <item enabled="false">50万</item>
+  <item enabled="false">50w</item>
+  <item enabled="false">来电了</item>
+  <item enabled="false">遥遥领先</item>
+  <!-- 六、烂梗组（默认关闭） -->
+  <item enabled="false">小黑子</item>
+  <item enabled="false">鸡脚</item>
+  <item enabled="false">你干嘛</item>
+  <item enabled="false">只因</item>
+  <item enabled="false">2年半</item>
+  <item enabled="false">泰裤辣</item>
+  <item enabled="false">鸽鸽</item>
+  <item enabled="false">乐子人</item>
+  <item enabled="false">鼠鼠</item>
+  <item enabled="false">典中典</item>
+  <item enabled="false">绷不住了</item>
+  <item enabled="false">笑嘻了</item>
+  <item enabled="false">奥利给</item>
+  <item enabled="false">栓Q</item>
+  <item enabled="false">退退退</item>
+  <item enabled="false">绝绝子</item>
+  <item enabled="false">yyds</item>
+  <item enabled="false">破大防</item>
+</filters>
