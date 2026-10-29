@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         B站弹幕屏蔽词一键导入
-// @namespace    muyan.blocklist.importer
+// @namespace    Lu_yamo.blocklist.importer
 // @version      1.0.0
 // @description  在 bilibili.com 任意页面打开面板，粘贴文本/选择 txt·xml 文件/使用内置词库，批量导入弹幕屏蔽词到账号云端（关键词+正则，去重、限速、进度日志），并支持导出备份。导入后手机 App 同账号同步即生效。
 // @author       Lu_yamo
