@@ -8,6 +8,7 @@
 // @grant        GM_registerMenuCommand
 // @run-at       document-idle
 // @license      MIT
+// @icon         https://raw.githubusercontent.com/Lu-yanmo/bili-danmaku-blocklist-importer/main/assets/bilibili-icon.ico
 // @homepageURL  https://github.com/Lu-yanmo/bili-danmaku-blocklist-importer
 // @supportURL   https://github.com/Lu-yanmo/bili-danmaku-blocklist-importer/issues
 // @source       https://github.com/Lu-yanmo/bili-danmaku-blocklist-importer
@@ -294,7 +295,7 @@
         #muyan-bl-log{flex:1;overflow-y:auto;background:#f6f7f8;border-radius:6px;padding:6px 8px;
           font:12px/1.6 Consolas,monospace;min-height:80px;white-space:pre-wrap;word-break:break-all;}
       </style>
-      <h3>弹幕屏蔽词导入 <a id="muyan-bl-close">收起</a></h3>
+      <h3><img src="/favicon.ico" alt="" style="width:16px;height:16px;vertical-align:-3px;margin-right:6px;">弹幕屏蔽词导入 <a id="muyan-bl-close">收起</a></h3>
       <div>
         <div style="font-size:12px;color:#61666d;margin-bottom:4px;">按分类导入内置词库：</div>
         <div id="muyan-bl-cats">${catHtml}</div>
