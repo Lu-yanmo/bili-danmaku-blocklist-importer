@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- B 站弹幕屏蔽词公开版词库（2026-10-29 扩充版 v1.2，178 条） -->
+<!-- B 站弹幕屏蔽词公开版词库（2026-10-29 v1.3，共 221 条） -->
 <!-- 用法：网页播放器 → 弹幕设置 → 弹幕屏蔽列表 → 空白处右键 → 导入XML文件 -->
-<!-- 五~十组（高误伤/口味向）以 enabled="false" 导入，导入后按需在列表中手动开启 -->
+<!-- 非高置信组以 enabled="false" 导入，导入后按需在列表中手动开启 -->
 <filters>
-  <!-- 一、广告引流 -->
+  <!-- 一、广告引流（高置信） -->
   <item enabled="true">公众号</item>
   <item enabled="true">加微信</item>
   <item enabled="true">加VX</item>
@@ -51,7 +51,7 @@
   <item enabled="true">拼单</item>
   <item enabled="true">秒杀</item>
   <item enabled="true">低价出</item>
-  <!-- 二、引战对喷 -->
+  <!-- 二、引战对喷（高置信） -->
   <item enabled="true">无脑吹</item>
   <item enabled="true">无脑黑</item>
   <item enabled="true">孝子</item>
@@ -79,7 +79,13 @@
   <item enabled="true">割韭菜</item>
   <item enabled="true">下头</item>
   <item enabled="true">拉踩</item>
-  <!-- 三、低质刷屏 -->
+  <item enabled="true">人渣</item>
+  <item enabled="true">扑街</item>
+  <item enabled="true">撕逼</item>
+  <item enabled="true">妈卖批</item>
+  <item enabled="true">走狗</item>
+  <item enabled="true">r=不看就?(滚|右上角|叉)</item>
+  <!-- 三、低质刷屏（高置信） -->
   <item enabled="true">到此一游</item>
   <item enabled="true">路过打卡</item>
   <item enabled="true">打卡</item>
@@ -106,7 +112,9 @@
   <item enabled="true">护体</item>
   <item enabled="true">结界</item>
   <item enabled="true">百万播放</item>
-  <!-- 四、结构化正则 -->
+  <item enabled="true">热乎</item>
+  <item enabled="true">先投再看</item>
+  <!-- 四、结构化正则（高置信） -->
   <item enabled="true">r=1[3-9]\d{9}</item>
   <item enabled="true">r=https?://</item>
   <item enabled="true">r=www\.</item>
@@ -122,7 +130,21 @@
   <item enabled="true">r=[?？]{3,}|[!！]{3,}</item>
   <item enabled="true">r=(.)\1{9,}</item>
   <item enabled="true">r=[vV]信|薇信|威芯</item>
-  <!-- 五、高频梗/情怀刷屏（高误伤，默认关闭） -->
+  <item enabled="true">r=^[0-9一二三四五六七八九十]+(秒|秒钟|分|分钟|时|小时|天|月|年)前?$</item>
+  <item enabled="true">r=^来早了.?$</item>
+  <item enabled="true">r=^最[早晚]的一[次集].?$</item>
+  <item enabled="true">r=^(霸占)?空[屏瓶]$</item>
+  <item enabled="true">r=^刚刚[!！]*$</item>
+  <item enabled="true">r=^暂停看.字$</item>
+  <item enabled="true">r=^(狗头)?保[护護]$</item>
+  <item enabled="true">r=^借[你您]吉言$</item>
+  <item enabled="true">r=^[许还][愿原].{0,8}$</item>
+  <item enabled="true">r=^接+$</item>
+  <item enabled="true">r=^吸+(欧气)?$</item>
+  <item enabled="true">r=^您[?？]$</item>
+  <item enabled="true">r=^(你品)?.?你细?品$</item>
+  <item enabled="true">r=(弹幕.*复制)|(复制.*弹幕)</item>
+  <!-- 五、高频梗/情怀刷屏（高误伤）（高误伤，默认关闭） -->
   <item enabled="false">前方高能</item>
   <item enabled="false">高能</item>
   <item enabled="false">空耳</item>
@@ -138,7 +160,10 @@
   <item enabled="false">推广</item>
   <item enabled="false">恰烂钱</item>
   <item enabled="false">有生之年</item>
-  <!-- 六、时政引战（高误伤，默认关闭） -->
+  <item enabled="false">倍速</item>
+  <item enabled="false">充值</item>
+  <item enabled="false">充钱</item>
+  <!-- 六、时政引战（高误伤）（高误伤，默认关闭） -->
   <item enabled="false">1450</item>
   <item enabled="false">50万</item>
   <item enabled="false">50w</item>
@@ -146,7 +171,10 @@
   <item enabled="false">遥遥领先</item>
   <item enabled="false">小粉红</item>
   <item enabled="false">公知</item>
-  <!-- 七、烂梗（口味向，默认关闭） -->
+  <item enabled="false">棒子</item>
+  <item enabled="false">阿三</item>
+  <item enabled="false">鬼子</item>
+  <!-- 七、烂梗（看口味）（口味向，默认关闭） -->
   <item enabled="false">小黑子</item>
   <item enabled="false">鸡脚</item>
   <item enabled="false">你干嘛</item>
@@ -171,7 +199,20 @@
   <item enabled="false">老登</item>
   <item enabled="false">逆天</item>
   <item enabled="false">抽象</item>
-  <!-- 八、饭圈控评（口味向，默认关闭） -->
+  <item enabled="false">懂哥</item>
+  <item enabled="false">神人</item>
+  <item enabled="false">狗叫</item>
+  <item enabled="false">怎么你了</item>
+  <item enabled="false">含金量</item>
+  <item enabled="false">今夕是何年</item>
+  <item enabled="false">太优雅了</item>
+  <item enabled="false">人机</item>
+  <item enabled="false">文艺复兴</item>
+  <item enabled="false">啊对对对</item>
+  <item enabled="false">114514</item>
+  <item enabled="false">1919810</item>
+  <item enabled="false">homo</item>
+  <!-- 八、饭圈控评（看口味）（口味向，默认关闭） -->
   <item enabled="false">控评</item>
   <item enabled="false">打投</item>
   <item enabled="false">应援</item>
@@ -181,14 +222,16 @@
   <item enabled="false">出道</item>
   <item enabled="false">撕番</item>
   <item enabled="false">xxs</item>
-  <!-- 九、剧透保护（口味向，默认关闭） -->
+  <!-- 九、剧透保护（看口味）（口味向，默认关闭） -->
   <item enabled="false">剧透</item>
   <item enabled="false">反向剧透</item>
   <item enabled="false">大结局</item>
   <item enabled="false">烂尾</item>
   <item enabled="false">提前看</item>
-  <!-- 十、争议正则（高误伤，默认关闭） -->
+  <!-- 十、争议正则（高误伤）（高误伤，默认关闭） -->
   <item enabled="false">r=^[哈嘿呵]{4,}$</item>
   <item enabled="false">r=^[a-zA-Z\s!?.,;:'\-]{6,}$</item>
   <item enabled="false">r=^.{1,2}$</item>
+  <item enabled="false">r=啊{3,}</item>
+  <item enabled="false">r=[典急孝乐绷]</item>
 </filters>
